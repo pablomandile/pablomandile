@@ -13,6 +13,9 @@ return [
 
     'name' => 'Pablo Mandile',
 
+    // Ruta relativa dentro del disco 'public' (storage/app/public).
+    'photo' => 'img/profile/pablo.jpeg',
+
     'headline' => [
         'es' => 'Programador Full-Stack PHP · Laravel · Vue',
         'en' => 'Full-Stack PHP Developer · Laravel · Vue',

@@ -5,6 +5,7 @@ export interface Localized {
 
 export interface Profile {
     name: string;
+    photo_url: string | null;
     headline: Localized;
     tagline: Localized;
     about: { es: string[]; en: string[] };
