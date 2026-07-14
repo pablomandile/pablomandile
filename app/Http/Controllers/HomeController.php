@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Experience;
 use App\Models\Project;
+use App\Models\Setting;
 use App\Models\Technology;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -16,6 +18,11 @@ class HomeController extends Controller
         $profile['photo_url'] = ! empty($profile['photo'])
             ? Storage::disk('public')->url($profile['photo'])
             : null;
+        $profile['about'] = Setting::get('about', ['es' => '', 'en' => '']);
+        $profile['experience'] = Experience::query()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['role', 'company', 'period']);
 
         return Inertia::render('Home', [
             'profile' => $profile,

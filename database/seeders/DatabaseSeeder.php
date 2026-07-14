@@ -13,16 +13,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@example.com')],
-            [
-                'name' => 'Pablo Mandile',
-                'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
-                'email_verified_at' => now(),
-            ]
-        );
+        // Crea el usuario admin sólo si se proveen credenciales por .env.
+        // Sin ellas no se crea ningún admin (evita usuarios con clave por defecto).
+        $adminEmail = env('ADMIN_EMAIL');
+        $adminPassword = env('ADMIN_PASSWORD');
+
+        if ($adminEmail && $adminPassword) {
+            User::updateOrCreate(
+                ['email' => $adminEmail],
+                [
+                    'name' => 'Pablo Mandile',
+                    'password' => Hash::make($adminPassword),
+                    'email_verified_at' => now(),
+                ]
+            );
+        }
 
         $this->call([
+            ProfileSeeder::class,
             TechnologySeeder::class,
             ProjectSeeder::class,
         ]);

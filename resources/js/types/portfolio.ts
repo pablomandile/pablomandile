@@ -8,7 +8,7 @@ export interface Profile {
     photo_url: string | null;
     headline: Localized;
     tagline: Localized;
-    about: { es: string[]; en: string[] };
+    about: Localized;
     experience: {
         role: Localized;
         company: string;

@@ -3,13 +3,22 @@ import SectionTitle from '@/components/portfolio/SectionTitle.vue';
 import { useLocalized } from '@/composables/useLocalized';
 import { useRevealOnScroll } from '@/composables/useRevealOnScroll';
 import type { Profile } from '@/types/portfolio';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-defineProps<{ profile: Profile }>();
+const props = defineProps<{ profile: Profile }>();
 
 const { t } = useI18n();
 const { l } = useLocalized();
 const { target, revealed } = useRevealOnScroll();
+
+// La bio se guarda como texto; cada párrafo se separa por una línea en blanco.
+const aboutParagraphs = computed(() =>
+    l(props.profile.about)
+        .split(/\n{2,}/)
+        .map((paragraph) => paragraph.trim())
+        .filter(Boolean),
+);
 </script>
 
 <template>
@@ -18,7 +27,7 @@ const { target, revealed } = useRevealOnScroll();
 
         <div class="grid gap-12 md:grid-cols-[3fr_2fr]">
             <div class="space-y-5 leading-relaxed text-slate-400">
-                <p v-for="(paragraph, index) in l(profile.about)" :key="index">{{ paragraph }}</p>
+                <p v-for="(paragraph, index) in aboutParagraphs" :key="index">{{ paragraph }}</p>
             </div>
 
             <aside class="glass h-fit rounded-2xl p-6">
