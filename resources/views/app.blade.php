@@ -8,6 +8,10 @@
 
         <meta name="description" content="Pablo Mandile — Programador Full-Stack PHP · Laravel · Vue. Portfolio personal.">
 
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" type="image/png" href="/img/logo.png">
+        <link rel="apple-touch-icon" href="/img/logo.png">
+
         @routes
         @vite(['resources/js/app.ts'])
         @inertiaHead
