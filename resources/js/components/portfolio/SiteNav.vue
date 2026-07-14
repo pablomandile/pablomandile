@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import LanguageToggle from '@/components/portfolio/LanguageToggle.vue';
-import { Menu, X } from 'lucide-vue-next';
+import { Link } from '@inertiajs/vue3';
+import { Lock, Menu, X } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -32,6 +33,15 @@ const links = [
                 </ul>
 
                 <LanguageToggle />
+
+                <Link
+                    :href="route('login')"
+                    class="glass rounded-full p-2 text-slate-400 transition hover:border-violet-400/50 hover:text-white"
+                    :aria-label="t('nav.login')"
+                    :title="t('nav.login')"
+                >
+                    <Lock class="h-4 w-4" />
+                </Link>
 
                 <button
                     type="button"

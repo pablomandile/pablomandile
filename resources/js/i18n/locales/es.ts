@@ -4,6 +4,7 @@ export default {
         tech: 'Tecnologías',
         projects: 'Proyectos',
         contact: 'Contacto',
+        login: 'Iniciar sesión',
     },
     hero: {
         greeting: 'Hola, soy',
