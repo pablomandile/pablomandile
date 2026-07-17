@@ -7,7 +7,9 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\Technology;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -35,12 +37,7 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request): RedirectResponse
     {
         $data = $this->prepareData($request->validated());
-
-        if ($request->hasFile('preview_image')) {
-            $data['preview_image'] = $request->file('preview_image')->store('projects', 'public');
-        } else {
-            unset($data['preview_image']);
-        }
+        $data['images'] = $this->storeUploadedImages($request);
 
         $project = Project::create($data);
         $project->technologies()->sync($request->validated('technologies', []));
@@ -60,12 +57,19 @@ class ProjectController extends Controller
     {
         $data = $this->prepareData($request->validated());
 
-        if ($request->hasFile('preview_image')) {
-            $this->deleteStoredImage($project);
-            $data['preview_image'] = $request->file('preview_image')->store('projects', 'public');
-        } else {
-            unset($data['preview_image']);
+        $current = $project->images ?? [];
+
+        // Imágenes conservadas, en el orden que envió el admin (así puede
+        // reordenar y elegir la portada), validadas contra las que existen.
+        $kept = array_values(array_intersect($request->validated('existing_images', []), $current));
+
+        // Borra del storage las imágenes que se quitaron.
+        foreach (array_diff($current, $kept) as $removed) {
+            $this->deleteStoredImage($removed);
         }
+
+        // Las nuevas subidas se agregan al final de la lista.
+        $data['images'] = array_values([...$kept, ...$this->storeUploadedImages($request)]);
 
         $project->update($data);
         $project->technologies()->sync($request->validated('technologies', []));
@@ -75,7 +79,10 @@ class ProjectController extends Controller
 
     public function destroy(Project $project): RedirectResponse
     {
-        $this->deleteStoredImage($project);
+        foreach ($project->images ?? [] as $image) {
+            $this->deleteStoredImage($image);
+        }
+
         $project->delete();
 
         return to_route('admin.projects.index');
@@ -83,11 +90,23 @@ class ProjectController extends Controller
 
     private function prepareData(array $data): array
     {
-        unset($data['technologies']);
+        unset($data['technologies'], $data['new_images'], $data['existing_images']);
 
         $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
 
         return $data;
+    }
+
+    /**
+     * Guarda los archivos subidos en `new_images` y devuelve sus rutas.
+     *
+     * @return array<int, string>
+     */
+    private function storeUploadedImages(Request $request): array
+    {
+        return collect($request->file('new_images', []))
+            ->map(fn (UploadedFile $file): string => $file->store('projects', 'public'))
+            ->all();
     }
 
     private function technologyOptions()
@@ -97,10 +116,10 @@ class ProjectController extends Controller
             ->get(['id', 'name', 'category']);
     }
 
-    private function deleteStoredImage(Project $project): void
+    private function deleteStoredImage(string $image): void
     {
-        if ($project->preview_image && ! str_starts_with($project->preview_image, 'http')) {
-            Storage::disk('public')->delete($project->preview_image);
+        if ($image !== '' && ! str_starts_with($image, 'http')) {
+            Storage::disk('public')->delete($image);
         }
     }
 }

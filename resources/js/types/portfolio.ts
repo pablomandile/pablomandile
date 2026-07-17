@@ -38,8 +38,12 @@ export interface Project {
     description: Localized;
     demo_url: string | null;
     repo_url: string | null;
-    preview_image: string | null;
-    preview_image_url: string | null;
+    // Rutas crudas almacenadas (usadas por el admin para reenviar las conservadas).
+    images: string[];
+    // URLs resueltas de todas las imágenes, en orden (la primera es la portada).
+    image_urls: string[];
+    // URL de la portada (primera imagen), o null si no hay imágenes.
+    cover_url: string | null;
     is_featured: boolean;
     is_published: boolean;
     sort_order: number;

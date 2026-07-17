@@ -50,8 +50,8 @@ function destroy(project: Project): void {
                         <tr v-for="project in projects" :key="project.id">
                             <td class="p-3">
                                 <img
-                                    v-if="project.preview_image_url"
-                                    :src="project.preview_image_url"
+                                    v-if="project.cover_url"
+                                    :src="project.cover_url"
                                     :alt="project.title"
                                     class="aspect-video w-24 rounded-md object-cover"
                                 />

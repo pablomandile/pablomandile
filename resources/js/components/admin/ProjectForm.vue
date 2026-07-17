@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Project, Technology } from '@/types/portfolio';
 import { Link, useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { Star, X } from 'lucide-vue-next';
+import { onBeforeUnmount, ref, watch } from 'vue';
 
 const props = defineProps<{
     project?: Project | null;
@@ -23,15 +24,57 @@ const form = useForm({
     },
     demo_url: props.project?.demo_url ?? '',
     repo_url: props.project?.repo_url ?? '',
-    preview_image: null as File | null,
+    existing_images: [...(props.project?.images ?? [])] as string[],
+    new_images: [] as File[],
     is_featured: props.project?.is_featured ?? false,
     is_published: props.project?.is_published ?? true,
     sort_order: props.project?.sort_order ?? 0,
     technologies: props.project?.technologies.map((technology) => technology.id) ?? [],
 });
 
+// Mapa ruta -> URL resuelta, para mostrar las miniaturas de las imágenes ya guardadas.
+const urlByPath: Record<string, string> = {};
+(props.project?.images ?? []).forEach((path, index) => {
+    urlByPath[path] = props.project!.image_urls[index];
+});
+
+// Imágenes nuevas seleccionadas (con preview local); se sincronizan a form.new_images.
+const newImages = ref<{ file: File; url: string }[]>([]);
+
+function syncNewImages(): void {
+    form.new_images = newImages.value.map((item) => item.file);
+}
+
+function onFilesChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    for (const file of files) {
+        newImages.value.push({ file, url: URL.createObjectURL(file) });
+    }
+    syncNewImages();
+    input.value = ''; // permite volver a elegir el mismo archivo
+}
+
+function removeNew(index: number): void {
+    URL.revokeObjectURL(newImages.value[index].url);
+    newImages.value.splice(index, 1);
+    syncNewImages();
+}
+
+function removeExisting(index: number): void {
+    form.existing_images.splice(index, 1);
+}
+
+function makeCoverExisting(index: number): void {
+    const [item] = form.existing_images.splice(index, 1);
+    form.existing_images.unshift(item);
+}
+
+onBeforeUnmount(() => {
+    newImages.value.forEach((item) => URL.revokeObjectURL(item.url));
+});
+
 const slugTouched = ref(isEdit);
-const previewUrl = ref<string | null>(props.project?.preview_image_url ?? null);
 
 function slugify(value: string): string {
     return value
@@ -51,13 +94,8 @@ watch(
     },
 );
 
-function onFileChange(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0] ?? null;
-    form.preview_image = file;
-    previewUrl.value = file ? URL.createObjectURL(file) : (props.project?.preview_image_url ?? null);
-}
-
 function submit(): void {
+    syncNewImages();
     const url = isEdit ? route('admin.projects.update', props.project!.id) : route('admin.projects.store');
     form.post(url, { forceFormData: true });
 }
@@ -108,12 +146,76 @@ const inputLikeClass =
             </div>
         </div>
 
-        <div class="space-y-2">
-            <Label for="preview_image">Imagen de vista previa</Label>
-            <img v-if="previewUrl" :src="previewUrl" alt="Vista previa" class="aspect-video w-64 rounded-lg border border-border object-cover" />
-            <Input id="preview_image" type="file" accept="image/*" @change="onFileChange" />
-            <p class="text-xs text-muted-foreground">JPG, PNG o WebP · máx. 2 MB · ideal 800×500</p>
-            <p v-if="form.errors.preview_image" class="text-sm text-destructive">{{ form.errors.preview_image }}</p>
+        <div class="space-y-3">
+            <Label>Imágenes</Label>
+            <p class="text-xs text-muted-foreground">
+                La primera imagen es la portada que se ve en la tarjeta. Al hacer click en la tarjeta se abren todas en un carrusel.
+                JPG, PNG o WebP · máx. 2 MB c/u · ideal 1200×750.
+            </p>
+
+            <!-- Imágenes ya guardadas -->
+            <div v-if="form.existing_images.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div
+                    v-for="(path, index) in form.existing_images"
+                    :key="path"
+                    class="group relative overflow-hidden rounded-lg border border-border"
+                >
+                    <img :src="urlByPath[path]" alt="" class="aspect-video w-full object-cover" />
+
+                    <span
+                        v-if="index === 0"
+                        class="absolute left-1.5 top-1.5 rounded-full bg-violet-600 px-2 py-0.5 text-[11px] font-medium text-white shadow"
+                    >
+                        Portada
+                    </span>
+
+                    <div class="absolute right-1.5 top-1.5 flex gap-1">
+                        <button
+                            v-if="index !== 0"
+                            type="button"
+                            class="rounded-md bg-black/60 p-1 text-white transition hover:bg-black/80"
+                            title="Hacer portada"
+                            @click="makeCoverExisting(index)"
+                        >
+                            <Star class="h-4 w-4" />
+                        </button>
+                        <button
+                            type="button"
+                            class="rounded-md bg-black/60 p-1 text-white transition hover:bg-destructive"
+                            title="Quitar"
+                            @click="removeExisting(index)"
+                        >
+                            <X class="h-4 w-4" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Imágenes nuevas a subir -->
+            <div v-if="newImages.length" class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div v-for="(item, index) in newImages" :key="item.url" class="relative overflow-hidden rounded-lg border border-dashed border-border">
+                    <img :src="item.url" alt="" class="aspect-video w-full object-cover" />
+                    <span class="absolute left-1.5 top-1.5 rounded-full bg-cyan-600 px-2 py-0.5 text-[11px] font-medium text-white shadow">Nueva</span>
+                    <button
+                        type="button"
+                        class="absolute right-1.5 top-1.5 rounded-md bg-black/60 p-1 text-white transition hover:bg-destructive"
+                        title="Quitar"
+                        @click="removeNew(index)"
+                    >
+                        <X class="h-4 w-4" />
+                    </button>
+                </div>
+            </div>
+
+            <Input id="new_images" type="file" accept="image/*" multiple @change="onFilesChange" />
+            <p v-if="form.errors.new_images" class="text-sm text-destructive">{{ form.errors.new_images }}</p>
+            <p
+                v-for="(error, key) in Object.entries(form.errors).filter(([field]) => field.startsWith('new_images.'))"
+                :key="key"
+                class="text-sm text-destructive"
+            >
+                {{ error[1] }}
+            </p>
         </div>
 
         <div class="space-y-2">

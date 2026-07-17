@@ -25,7 +25,7 @@ class AdminProjectTest extends TestCase
         $this->get('/register')->assertNotFound();
     }
 
-    public function test_admin_can_create_a_project_with_preview_image(): void
+    public function test_admin_can_create_a_project_with_images(): void
     {
         Storage::fake('public');
 
@@ -42,7 +42,10 @@ class AdminProjectTest extends TestCase
                 'description' => ['es' => 'Descripción', 'en' => 'Description'],
                 'demo_url' => 'https://example.com',
                 'repo_url' => '',
-                'preview_image' => UploadedFile::fake()->image('preview.png', 800, 500),
+                'new_images' => [
+                    UploadedFile::fake()->image('one.png', 800, 500),
+                    UploadedFile::fake()->image('two.png', 800, 500),
+                ],
                 'is_featured' => '1',
                 'is_published' => '1',
                 'sort_order' => '5',
@@ -56,20 +59,23 @@ class AdminProjectTest extends TestCase
         $this->assertTrue($project->is_featured);
         $this->assertSame(5, $project->sort_order);
         $this->assertCount(1, $project->technologies);
-        Storage::disk('public')->assertExists($project->preview_image);
+        $this->assertCount(2, $project->images);
+        Storage::disk('public')->assertExists($project->images[0]);
+        Storage::disk('public')->assertExists($project->images[1]);
     }
 
-    public function test_admin_can_update_a_project_replacing_the_image(): void
+    public function test_admin_can_update_a_project_replacing_images(): void
     {
         Storage::fake('public');
+
+        $oldImage = UploadedFile::fake()->image('old.png')->store('projects', 'public');
 
         $project = Project::create([
             'title' => 'Original',
             'slug' => 'original',
             'description' => ['es' => 'Original', 'en' => 'Original'],
-            'preview_image' => UploadedFile::fake()->image('old.png')->store('projects', 'public'),
+            'images' => [$oldImage],
         ]);
-        $oldImage = $project->preview_image;
 
         $this->actingAs(User::factory()->create())
             ->put("/admin/projects/{$project->id}", [
@@ -78,7 +84,8 @@ class AdminProjectTest extends TestCase
                 'description' => ['es' => 'Nueva', 'en' => 'New'],
                 'demo_url' => '',
                 'repo_url' => '',
-                'preview_image' => UploadedFile::fake()->image('new.png'),
+                'existing_images' => [], // se quita la imagen anterior
+                'new_images' => [UploadedFile::fake()->image('new.png')],
                 'is_featured' => '0',
                 'is_published' => '1',
                 'sort_order' => '0',
@@ -90,21 +97,60 @@ class AdminProjectTest extends TestCase
 
         $this->assertSame('Actualizado', $project->title);
         $this->assertSame('Nueva', $project->description['es']);
+        $this->assertCount(1, $project->images);
         Storage::disk('public')->assertMissing($oldImage);
-        Storage::disk('public')->assertExists($project->preview_image);
+        Storage::disk('public')->assertExists($project->images[0]);
     }
 
-    public function test_admin_can_delete_a_project_and_its_image(): void
+    public function test_admin_can_keep_and_append_images_on_update(): void
     {
         Storage::fake('public');
+
+        $keptImage = UploadedFile::fake()->image('kept.png')->store('projects', 'public');
+
+        $project = Project::create([
+            'title' => 'Con galería',
+            'slug' => 'con-galeria',
+            'description' => ['es' => 'x', 'en' => 'x'],
+            'images' => [$keptImage],
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->put("/admin/projects/{$project->id}", [
+                'title' => 'Con galería',
+                'slug' => 'con-galeria',
+                'description' => ['es' => 'x', 'en' => 'x'],
+                'demo_url' => '',
+                'repo_url' => '',
+                'existing_images' => [$keptImage],
+                'new_images' => [UploadedFile::fake()->image('added.png')],
+                'is_featured' => '0',
+                'is_published' => '1',
+                'sort_order' => '0',
+                'technologies' => [],
+            ])
+            ->assertRedirect('/admin/projects');
+
+        $project->refresh();
+
+        $this->assertCount(2, $project->images);
+        $this->assertSame($keptImage, $project->images[0]);
+        Storage::disk('public')->assertExists($project->images[0]);
+        Storage::disk('public')->assertExists($project->images[1]);
+    }
+
+    public function test_admin_can_delete_a_project_and_its_images(): void
+    {
+        Storage::fake('public');
+
+        $image = UploadedFile::fake()->image('gone.png')->store('projects', 'public');
 
         $project = Project::create([
             'title' => 'Para borrar',
             'slug' => 'para-borrar',
             'description' => ['es' => 'x', 'en' => 'x'],
-            'preview_image' => UploadedFile::fake()->image('gone.png')->store('projects', 'public'),
+            'images' => [$image],
         ]);
-        $image = $project->preview_image;
 
         $this->actingAs(User::factory()->create())
             ->delete("/admin/projects/{$project->id}")

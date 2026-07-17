@@ -15,18 +15,19 @@ class Project extends Model
         'description',
         'demo_url',
         'repo_url',
-        'preview_image',
+        'images',
         'is_featured',
         'is_published',
         'sort_order',
     ];
 
-    protected $appends = ['preview_image_url'];
+    protected $appends = ['image_urls', 'cover_url'];
 
     protected function casts(): array
     {
         return [
             'description' => 'array',
+            'images' => 'array',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
         ];
@@ -37,18 +38,30 @@ class Project extends Model
         return $this->belongsToMany(Technology::class);
     }
 
-    protected function previewImageUrl(): Attribute
+    /**
+     * URLs resueltas de todas las imágenes, en orden (la primera es la portada).
+     */
+    protected function imageUrls(): Attribute
     {
-        return Attribute::get(function (): ?string {
-            if (! $this->preview_image) {
-                return null;
-            }
+        return Attribute::get(fn (): array => collect($this->images ?? [])
+            ->map(fn (string $image): string => $this->resolveImageUrl($image))
+            ->all());
+    }
 
-            if (str_starts_with($this->preview_image, 'http')) {
-                return $this->preview_image;
-            }
+    /**
+     * URL de la portada (primera imagen), o null si no hay imágenes.
+     */
+    protected function coverUrl(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->image_urls[0] ?? null);
+    }
 
-            return Storage::disk('public')->url($this->preview_image);
-        });
+    private function resolveImageUrl(string $image): string
+    {
+        if (str_starts_with($image, 'http')) {
+            return $image;
+        }
+
+        return Storage::disk('public')->url($image);
     }
 }

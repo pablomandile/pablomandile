@@ -29,6 +29,10 @@ export default {
         featured: 'Featured',
         demo: 'Live demo',
         code: 'Code',
+        expand: 'Expand images',
+        prev_image: 'Previous image',
+        next_image: 'Next image',
+        go_to_image: 'Go to image {n}',
     },
     contact: {
         title: 'Contact',
