@@ -3,6 +3,7 @@ import AboutSection from '@/components/portfolio/AboutSection.vue';
 import ContactSection from '@/components/portfolio/ContactSection.vue';
 import GradientBlobs from '@/components/portfolio/GradientBlobs.vue';
 import HeroSection from '@/components/portfolio/HeroSection.vue';
+import LogoDivider from '@/components/portfolio/LogoDivider.vue';
 import ProjectsSection from '@/components/portfolio/ProjectsSection.vue';
 import SiteNav from '@/components/portfolio/SiteNav.vue';
 import TechStackSection from '@/components/portfolio/TechStackSection.vue';
@@ -42,6 +43,7 @@ onMounted(() => {
             <AboutSection :profile="profile" />
             <TechStackSection :technologies="technologies" />
             <ProjectsSection :projects="projects" />
+            <LogoDivider />
             <ContactSection :profile="profile" />
         </main>
 
