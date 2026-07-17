@@ -41,7 +41,10 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // URL relativa: las imágenes se sirven bajo /storage del mismo host
+            // (funciona en local con cualquier dominio y en producción por igual).
+            // Si algún día se sirven desde un CDN/dominio aparte, definir ASSET_URL.
+            'url' => env('ASSET_URL', '').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
