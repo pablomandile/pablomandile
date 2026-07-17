@@ -4,6 +4,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        {{-- Le indica al navegador que el sitio maneja su propio modo oscuro.
+             Evita que el "modo oscuro automático" de Chrome/Samsung Internet
+             re-oscurezca una página que ya es oscura y apague los gradientes/neón. --}}
+        <meta name="color-scheme" content="dark light">
+
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <meta name="description" content="Pablo Mandile — Programador Full-Stack PHP · Laravel · Vue. Portfolio personal.">

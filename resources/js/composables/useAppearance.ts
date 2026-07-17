@@ -3,12 +3,14 @@ import { onMounted, ref } from 'vue';
 type Appearance = 'light' | 'dark' | 'system';
 
 export function updateTheme(value: Appearance) {
-    if (value === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.classList.toggle('dark', systemTheme === 'dark');
-    } else {
-        document.documentElement.classList.toggle('dark', value === 'dark');
-    }
+    const isDark = value === 'dark' || (value === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    document.documentElement.classList.toggle('dark', isDark);
+
+    // Mantiene el color-scheme del documento en sintonía con el tema real, para
+    // que los controles nativos (scrollbars, inputs, etc.) del panel admin
+    // acompañen el selector claro/oscuro.
+    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
 }
 
 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
