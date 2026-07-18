@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { useLocalized } from '@/composables/useLocalized';
 import type { Project } from '@/types/portfolio';
 import { ExternalLink, Images, Maximize2 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{ project: Project }>();
@@ -15,6 +15,16 @@ const { l } = useLocalized();
 
 const images = computed<string[]>(() => props.project.image_urls ?? []);
 const hasImages = computed<boolean>(() => images.value.length > 0);
+
+// Descripción: se muestra recortada a un máximo de caracteres con un enlace
+// "más" para desplegar el texto completo (y "menos" para volver a plegarlo).
+const DESCRIPTION_LIMIT = 331;
+const expanded = ref(false);
+const fullDescription = computed<string>(() => l(props.project.description));
+const isLong = computed<boolean>(() => fullDescription.value.length > DESCRIPTION_LIMIT);
+const shownDescription = computed<string>(() =>
+    isLong.value && !expanded.value ? fullDescription.value.slice(0, DESCRIPTION_LIMIT).trimEnd() : fullDescription.value,
+);
 </script>
 
 <template>
@@ -82,7 +92,14 @@ const hasImages = computed<boolean>(() => images.value.length > 0);
         <div class="flex flex-1 flex-col p-5">
             <h3 class="text-lg font-semibold text-white">{{ project.title }}</h3>
 
-            <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{{ l(project.description) }}</p>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">
+                {{ shownDescription }}<template v-if="isLong">{{ expanded ? ' ' : '… ' }}<button
+                        type="button"
+                        class="cursor-pointer font-medium text-cyan-400 transition hover:text-cyan-300"
+                        :aria-expanded="expanded"
+                        @click="expanded = !expanded"
+                    >{{ expanded ? t('projects.less') : t('projects.more') }}</button></template>
+            </p>
 
             <div class="mt-4 flex flex-wrap gap-2">
                 <span

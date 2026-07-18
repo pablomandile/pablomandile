@@ -29,6 +29,8 @@ export default {
         featured: 'Destacado',
         demo: 'Ver demo',
         code: 'Código',
+        more: 'más',
+        less: 'menos',
         expand: 'Ampliar imágenes',
         prev_image: 'Imagen anterior',
         next_image: 'Imagen siguiente',

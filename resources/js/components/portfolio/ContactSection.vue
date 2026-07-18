@@ -9,7 +9,7 @@ import { LoaderCircle, MapPin } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const props = defineProps<{ profile: Profile }>();
+defineProps<{ profile: Profile }>();
 
 const { t } = useI18n();
 const { l } = useLocalized();
