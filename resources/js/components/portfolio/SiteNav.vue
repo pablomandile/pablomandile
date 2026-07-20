@@ -22,7 +22,7 @@ const links = [
     <header class="glass fixed inset-x-0 top-0 z-50 border-x-0 border-t-0">
         <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
             <a href="#" class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-white">
-                <img src="/img/logo.png" alt="" class="h-9 w-9 rounded-lg" />
+                <img src="/img/logo-v2.png" alt="" class="h-9 w-9 rounded-lg" />
                 <span>{{ name }}</span>
             </a>
 

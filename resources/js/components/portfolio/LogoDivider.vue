@@ -17,7 +17,7 @@ const { target, revealed } = useRevealOnScroll(0.3);
 
         <div class="relative shrink-0">
             <div class="absolute inset-0 -z-10 rounded-full bg-gradient-to-r from-violet-500/30 to-cyan-500/30 blur-xl"></div>
-            <img src="/img/logo.png" alt="" class="h-14 w-14 rounded-2xl ring-1 ring-white/10" />
+            <img src="/img/logo-v2.png" alt="" class="h-14 w-14 rounded-2xl ring-1 ring-white/10" />
         </div>
 
         <span class="h-px max-w-[8rem] flex-1 bg-gradient-to-l from-transparent to-cyan-500/40"></span>

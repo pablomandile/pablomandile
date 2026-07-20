@@ -5,6 +5,7 @@
 /public/storage
 /storage/*.key
 /storage/*.sql
+/storage/*.patch
 /storage/pail
 /vendor
 .env
