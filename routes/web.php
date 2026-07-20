@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
+use App\Http\Controllers\Admin\CvController as AdminCvController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TechnologyController as AdminTechnologyController;
 use App\Http\Controllers\ContactController;
@@ -21,6 +22,9 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('technologies', AdminTechnologyController::class)->except('show');
         Route::get('about', [AdminAboutController::class, 'edit'])->name('about.edit');
         Route::put('about', [AdminAboutController::class, 'update'])->name('about.update');
+        Route::get('cv', [AdminCvController::class, 'edit'])->name('cv.edit');
+        Route::post('cv', [AdminCvController::class, 'update'])->name('cv.update');
+        Route::delete('cv', [AdminCvController::class, 'destroy'])->name('cv.destroy');
     });
 });
 

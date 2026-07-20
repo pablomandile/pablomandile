@@ -19,6 +19,10 @@ return [
     // Ruta relativa dentro del disco 'public' (storage/app/public).
     'photo' => 'img/profile/pablo.jpeg',
 
+    // CV en PDF (ruta relativa dentro del disco 'public'). El botón de
+    // descarga solo aparece en la home si el archivo existe.
+    'cv' => 'cv/Pablo-Mandile-CV.pdf',
+
     'headline' => [
         'es' => 'Programador Full-Stack PHP · Laravel · Vue',
         'en' => 'Full-Stack PHP Developer · Laravel · Vue',

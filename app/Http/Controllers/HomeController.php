@@ -18,6 +18,12 @@ class HomeController extends Controller
         $profile['photo_url'] = ! empty($profile['photo'])
             ? Storage::disk('public')->url($profile['photo'])
             : null;
+        // El CV se administra desde el panel (tabla settings); si no hay uno
+        // cargado todavía, cae al valor de config como respaldo.
+        $cvPath = Setting::get('cv')['path'] ?? ($profile['cv'] ?? null);
+        $profile['cv_url'] = $cvPath && Storage::disk('public')->exists($cvPath)
+            ? Storage::disk('public')->url($cvPath)
+            : null;
         $profile['about'] = Setting::get('about', ['es' => '', 'en' => '']);
         $profile['experience'] = Experience::query()
             ->orderBy('sort_order')

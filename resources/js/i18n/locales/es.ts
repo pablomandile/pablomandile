@@ -11,6 +11,7 @@ export default {
         cta_projects: 'Ver proyectos',
         cta_contact: 'Contactame',
     },
+    download_cv: 'Descargar CV',
     about: {
         title: 'Sobre mí',
         experience: 'Experiencia',

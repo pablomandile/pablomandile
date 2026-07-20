@@ -9,7 +9,9 @@ return [
     'current_password' => 'La contraseña es incorrecta.',
     'email' => 'El campo :attribute debe ser un correo electrónico válido.',
     'exists' => 'El valor seleccionado para :attribute no es válido.',
+    'file' => 'El campo :attribute debe ser un archivo.',
     'image' => 'El campo :attribute debe ser una imagen.',
+    'mimes' => 'El campo :attribute debe ser un archivo de tipo: :values.',
     'integer' => 'El campo :attribute debe ser un número entero.',
     'lowercase' => 'El campo :attribute debe estar en minúsculas.',
 
@@ -34,6 +36,7 @@ return [
 
     'attributes' => [
         'current_password' => 'contraseña actual',
+        'cv' => 'CV',
         'demo_url' => 'URL de demo',
         'description.en' => 'descripción en inglés',
         'description.es' => 'descripción en español',

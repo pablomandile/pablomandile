@@ -4,6 +4,7 @@ import LinkedinIcon from '@/components/portfolio/icons/LinkedinIcon.vue';
 import { useLocalized } from '@/composables/useLocalized';
 import { useRevealOnScroll } from '@/composables/useRevealOnScroll';
 import type { Profile } from '@/types/portfolio';
+import { FileDown } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{ profile: Profile }>();
@@ -68,6 +69,16 @@ const { target, revealed } = useRevealOnScroll();
                         class="glass rounded-full p-3 transition hover:border-cyan-400/50 hover:text-white"
                     >
                         <LinkedinIcon />
+                    </a>
+                    <a
+                        v-if="profile.cv_url"
+                        :href="profile.cv_url"
+                        download="Pablo-Mandile-CV.pdf"
+                        :aria-label="t('download_cv')"
+                        :title="t('download_cv')"
+                        class="glass rounded-full p-3 transition hover:border-cyan-400/50 hover:text-white"
+                    >
+                        <FileDown class="h-[1em] w-[1em]" />
                     </a>
                 </div>
             </div>
