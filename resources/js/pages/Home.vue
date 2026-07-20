@@ -9,7 +9,6 @@ import SiteNav from '@/components/portfolio/SiteNav.vue';
 import TechStackSection from '@/components/portfolio/TechStackSection.vue';
 import type { Profile, Project, TechCategoryKey, Technology } from '@/types/portfolio';
 import { Head } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 defineProps<{
@@ -20,14 +19,6 @@ defineProps<{
 
 const { t } = useI18n();
 const year = new Date().getFullYear();
-
-// La portada siempre se muestra en oscuro (independientemente de la preferencia
-// del sistema o del panel admin). Forzamos el color-scheme para que el navegador
-// no la trate como página "clara" y le aplique su modo oscuro automático encima,
-// que apaga el neón (gradientes, glow y texto con degradado).
-onMounted(() => {
-    document.documentElement.style.colorScheme = 'dark';
-});
 </script>
 
 <template>

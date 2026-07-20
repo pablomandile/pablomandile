@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="color-scheme: dark;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        {{-- Le indica al navegador que el sitio maneja su propio modo oscuro.
-             Evita que el "modo oscuro automático" de Chrome/Samsung Internet
-             re-oscurezca una página que ya es oscura y apague los gradientes/neón. --}}
-        <meta name="color-scheme" content="dark light">
+        {{-- La cara pública del sitio es siempre oscura. Lo declaramos de forma
+             inequívoca ("dark", no "dark light") —acá, en el atributo style de
+             <html> y en :root del CSS— para que el "modo oscuro automático" de
+             Chrome/Samsung Internet no re-oscurezca la página invirtiendo los
+             gradientes, el glow y el texto con degradado. --}}
+        <meta name="color-scheme" content="dark">
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
         <meta name="description" content="Pablo Mandile — Programador Full-Stack PHP · Laravel · Vue. Portfolio personal.">
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" type="image/png" href="/img/logo.png">
-        <link rel="apple-touch-icon" href="/img/logo.png">
+        <link rel="icon" href="/favicon-v2.ico" sizes="any">
+        <link rel="icon" type="image/png" href="/img/logo-v2.png">
+        <link rel="apple-touch-icon" href="/img/logo-v2.png">
 
         @routes
         @vite(['resources/js/app.ts'])

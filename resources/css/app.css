@@ -10,6 +10,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* La cara pública del sitio es siempre oscura: lo declaramos de forma inequívoca
+   para que ningún navegador móvil (Chrome / Samsung Internet) aplique su modo
+   oscuro automático invirtiendo gradientes, glow y texto con degradado. */
+:root {
+    color-scheme: dark;
+}
+
 /* ---- Portfolio (diseño glass con gradientes) ---- */
 
 @layer components {

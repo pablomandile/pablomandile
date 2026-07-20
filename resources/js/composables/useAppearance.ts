@@ -5,12 +5,10 @@ type Appearance = 'light' | 'dark' | 'system';
 export function updateTheme(value: Appearance) {
     const isDark = value === 'dark' || (value === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+    // Solo alterna la clase para el tema del panel admin. El color-scheme del
+    // documento lo fija el servidor en "dark" (ver app.blade.php / app.css):
+    // la portada pública es siempre oscura y no debe depender de JS.
     document.documentElement.classList.toggle('dark', isDark);
-
-    // Mantiene el color-scheme del documento en sintonía con el tema real, para
-    // que los controles nativos (scrollbars, inputs, etc.) del panel admin
-    // acompañen el selector claro/oscuro.
-    document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
 }
 
 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
