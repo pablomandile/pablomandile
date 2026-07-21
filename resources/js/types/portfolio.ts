@@ -32,6 +32,15 @@ export interface Technology {
     icon: string | null;
 }
 
+export interface Certificate {
+    id: number;
+    title: string;
+    image?: string;
+    image_url: string | null;
+    is_published?: boolean;
+    sort_order?: number;
+}
+
 export interface Project {
     id: number;
     title: string;

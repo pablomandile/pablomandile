@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             ProfileSeeder::class,
             TechnologySeeder::class,
             ProjectSeeder::class,
+            CertificateSeeder::class,
         ]);
     }
 }

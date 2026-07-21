@@ -8,9 +8,14 @@ const props = withDefaults(
         images: string[];
         alt?: string;
         startIndex?: number;
+        heightClass?: string;
+        enlargeable?: boolean;
+        keyboard?: boolean;
     }>(),
-    { alt: '', startIndex: 0 },
+    { alt: '', startIndex: 0, heightClass: 'max-h-[72vh]', enlargeable: false, keyboard: true },
 );
+
+const emit = defineEmits<{ 'update:index': [number]; 'image-click': [number] }>();
 
 const { t } = useI18n();
 
@@ -23,6 +28,8 @@ watch(
         current.value = clamp(value);
     },
 );
+
+watch(current, (value) => emit('update:index', value));
 
 function clamp(index: number): number {
     const total = props.images.length;
@@ -63,7 +70,11 @@ function onTouchEnd(event: TouchEvent): void {
     }
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown));
+onMounted(() => {
+    if (props.keyboard) {
+        window.addEventListener('keydown', onKeydown);
+    }
+});
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
 </script>
 
@@ -75,7 +86,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown));
                     <img
                         :src="image"
                         :alt="images.length > 1 ? `${alt} (${index + 1}/${images.length})` : alt"
-                        class="max-h-[72vh] w-full object-contain"
+                        class="w-full object-contain"
+                        :class="[heightClass, enlargeable ? 'cursor-zoom-in' : '']"
+                        @click="enlargeable && emit('image-click', current)"
                     />
                 </div>
             </div>

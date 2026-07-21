@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AboutSection from '@/components/portfolio/AboutSection.vue';
+import CertificatesSection from '@/components/portfolio/CertificatesSection.vue';
 import ContactSection from '@/components/portfolio/ContactSection.vue';
 import GradientBlobs from '@/components/portfolio/GradientBlobs.vue';
 import HeroSection from '@/components/portfolio/HeroSection.vue';
@@ -7,7 +8,7 @@ import LogoDivider from '@/components/portfolio/LogoDivider.vue';
 import ProjectsSection from '@/components/portfolio/ProjectsSection.vue';
 import SiteNav from '@/components/portfolio/SiteNav.vue';
 import TechStackSection from '@/components/portfolio/TechStackSection.vue';
-import type { Profile, Project, TechCategoryKey, Technology } from '@/types/portfolio';
+import type { Certificate, Profile, Project, TechCategoryKey, Technology } from '@/types/portfolio';
 import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
@@ -15,6 +16,7 @@ defineProps<{
     profile: Profile;
     technologies: Partial<Record<TechCategoryKey, Technology[]>>;
     projects: Project[];
+    certificates: Certificate[];
 }>();
 
 const { t } = useI18n();
@@ -34,6 +36,7 @@ const year = new Date().getFullYear();
             <AboutSection :profile="profile" />
             <TechStackSection :technologies="technologies" />
             <ProjectsSection :projects="projects" />
+            <CertificatesSection :certificates="certificates" />
             <LogoDivider />
             <ContactSection :profile="profile" />
         </main>

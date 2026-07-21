@@ -14,6 +14,7 @@ const links = [
     { anchor: '#about', label: 'nav.about' },
     { anchor: '#tech', label: 'nav.tech' },
     { anchor: '#projects', label: 'nav.projects' },
+    { anchor: '#certificates', label: 'nav.certificates' },
     { anchor: '#contact', label: 'nav.contact' },
 ];
 </script>

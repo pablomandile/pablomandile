@@ -3,8 +3,14 @@ export default {
         about: 'About',
         tech: 'Technologies',
         projects: 'Projects',
+        certificates: 'Certificates',
         contact: 'Contact',
         login: 'Log in',
+    },
+    certificates: {
+        title: 'Certificates',
+        empty: 'Certificates coming soon.',
+        tap_hint: 'Tap the image to enlarge it',
     },
     hero: {
         greeting: "Hi, I'm",

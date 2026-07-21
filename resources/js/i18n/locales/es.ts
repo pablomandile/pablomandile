@@ -3,8 +3,14 @@ export default {
         about: 'Sobre mí',
         tech: 'Tecnologías',
         projects: 'Proyectos',
+        certificates: 'Certificados',
         contact: 'Contacto',
         login: 'Iniciar sesión',
+    },
+    certificates: {
+        title: 'Certificados',
+        empty: 'Pronto voy a subir mis certificados.',
+        tap_hint: 'Tocá la imagen para ampliarla',
     },
     hero: {
         greeting: 'Hola, soy',

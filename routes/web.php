@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
+use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use App\Http\Controllers\Admin\CvController as AdminCvController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\TechnologyController as AdminTechnologyController;
@@ -20,6 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('projects', AdminProjectController::class)->except('show');
         Route::resource('technologies', AdminTechnologyController::class)->except('show');
+        Route::resource('certificates', AdminCertificateController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::get('about', [AdminAboutController::class, 'edit'])->name('about.edit');
         Route::put('about', [AdminAboutController::class, 'update'])->name('about.update');
         Route::get('cv', [AdminCvController::class, 'edit'])->name('cv.edit');

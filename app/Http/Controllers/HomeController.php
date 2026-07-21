@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificate;
 use App\Models\Experience;
 use App\Models\Project;
 use App\Models\Setting;
@@ -42,6 +43,11 @@ class HomeController extends Controller
                 ->orderByDesc('is_featured')
                 ->orderBy('sort_order')
                 ->get(),
+            'certificates' => Certificate::query()
+                ->where('is_published', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get(['id', 'title', 'image']),
         ]);
     }
 }
