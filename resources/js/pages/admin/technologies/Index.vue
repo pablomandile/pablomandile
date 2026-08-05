@@ -38,9 +38,9 @@ function destroy(technology: Technology): void {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col gap-6 p-4">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 class="text-xl font-semibold">Tecnologías</h1>
-                <Button as-child>
+                <Button as-child class="w-full sm:w-auto">
                     <Link :href="route('admin.technologies.create')">
                         <Plus class="h-4 w-4" />
                         Nueva tecnología
@@ -55,7 +55,37 @@ function destroy(technology: Technology): void {
                     <h2 class="mb-2 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
                         {{ categoryLabels[category] ?? category }}
                     </h2>
-                    <div class="overflow-x-auto rounded-xl border border-border">
+
+                    <!-- Móvil: una tarjeta por tecnología, sin scroll horizontal -->
+                    <ul class="grid gap-3 md:hidden">
+                        <li v-for="technology in items" :key="technology.id" class="space-y-3 rounded-xl border border-border p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="font-medium leading-tight">{{ technology.name }}</p>
+                                    <p v-if="technology.icon" class="mt-0.5 truncate text-xs text-muted-foreground">
+                                        {{ technology.icon }}
+                                    </p>
+                                </div>
+                                <span class="shrink-0 text-xs text-muted-foreground">Orden {{ technology.sort_order }}</span>
+                            </div>
+
+                            <div class="flex gap-2 border-t border-border pt-3">
+                                <Button variant="outline" class="h-10 flex-1" as-child>
+                                    <Link :href="route('admin.technologies.edit', technology.id)">
+                                        <Pencil class="h-4 w-4" />
+                                        Editar
+                                    </Link>
+                                </Button>
+                                <Button variant="outline" class="h-10 flex-1 text-destructive" @click="destroy(technology)">
+                                    <Trash2 class="h-4 w-4" />
+                                    Eliminar
+                                </Button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Escritorio: tabla -->
+                    <div class="hidden overflow-x-auto rounded-xl border border-border md:block">
                         <table class="w-full text-sm">
                             <tbody class="divide-y divide-border">
                                 <tr v-for="technology in items" :key="technology.id">

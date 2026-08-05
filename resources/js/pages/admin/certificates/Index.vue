@@ -86,7 +86,7 @@ function destroy(certificate: Certificate): void {
                     <p v-if="form.errors.image" class="text-sm text-destructive">{{ form.errors.image }}</p>
                 </div>
 
-                <Button type="submit" :disabled="form.processing">
+                <Button type="submit" :disabled="form.processing" class="w-full sm:w-auto">
                     <Upload class="h-4 w-4" />
                     Subir certificado
                 </Button>

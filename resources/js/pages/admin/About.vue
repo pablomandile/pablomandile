@@ -56,11 +56,11 @@ const textareaClass =
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <form class="flex flex-1 flex-col gap-8 p-4" @submit.prevent="submit">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h1 class="text-xl font-semibold">Sobre mí</h1>
                 <div class="flex items-center gap-3">
                     <p v-if="form.recentlySuccessful" class="text-sm text-emerald-600 dark:text-emerald-400">Guardado.</p>
-                    <Button type="submit" :disabled="form.processing">Guardar cambios</Button>
+                    <Button type="submit" :disabled="form.processing" class="flex-1 sm:flex-none">Guardar cambios</Button>
                 </div>
             </div>
 
@@ -140,7 +140,7 @@ const textareaClass =
             </section>
 
             <div class="max-w-3xl border-t border-border pt-6">
-                <Button type="submit" :disabled="form.processing">Guardar cambios</Button>
+                <Button type="submit" :disabled="form.processing" class="w-full sm:w-auto">Guardar cambios</Button>
             </div>
         </form>
     </AppLayout>

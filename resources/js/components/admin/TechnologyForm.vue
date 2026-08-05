@@ -66,11 +66,11 @@ function submit(): void {
             <p v-if="form.errors.sort_order" class="text-sm text-destructive">{{ form.errors.sort_order }}</p>
         </div>
 
-        <div class="flex gap-3 border-t border-border pt-6">
-            <Button type="submit" :disabled="form.processing">
+        <div class="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row">
+            <Button type="submit" :disabled="form.processing" class="w-full sm:w-auto">
                 {{ isEdit ? 'Guardar cambios' : 'Crear tecnología' }}
             </Button>
-            <Button variant="outline" as-child>
+            <Button variant="outline" as-child class="w-full sm:w-auto">
                 <Link :href="route('admin.technologies.index')">Cancelar</Link>
             </Button>
         </div>
