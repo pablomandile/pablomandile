@@ -23,6 +23,7 @@ class StoreProjectRequest extends FormRequest
             'repo_url' => ['nullable', 'url', 'max:255'],
             'new_images' => ['nullable', 'array', 'max:12'],
             'new_images.*' => ['image', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
             'is_featured' => ['boolean'],
             'is_published' => ['boolean'],
             'sort_order' => ['integer', 'min:0', 'max:65535'],

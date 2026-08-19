@@ -54,6 +54,10 @@ export interface Project {
     image_urls: string[];
     // URL de la portada (primera imagen), o null si no hay imágenes.
     cover_url: string | null;
+    // Ruta cruda del logo que identifica al proyecto.
+    logo: string | null;
+    // URL resuelta del logo, o null si el proyecto no tiene logo.
+    logo_url: string | null;
     is_featured: boolean;
     is_published: boolean;
     sort_order: number;

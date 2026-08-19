@@ -26,6 +26,8 @@ class UpdateProjectRequest extends FormRequest
             'existing_images.*' => ['string'],
             'new_images' => ['nullable', 'array', 'max:12'],
             'new_images.*' => ['image', 'max:2048'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
+            'remove_logo' => ['boolean'],
             'is_featured' => ['boolean'],
             'is_published' => ['boolean'],
             'sort_order' => ['integer', 'min:0', 'max:65535'],

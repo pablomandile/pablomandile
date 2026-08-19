@@ -38,6 +38,7 @@ class ProjectController extends Controller
     {
         $data = $this->prepareData($request->validated());
         $data['images'] = $this->storeUploadedImages($request);
+        $data['logo'] = $request->file('logo')?->store('projects/logos', 'public');
 
         $project = Project::create($data);
         $project->technologies()->sync($request->validated('technologies', []));
@@ -70,6 +71,7 @@ class ProjectController extends Controller
 
         // Las nuevas subidas se agregan al final de la lista.
         $data['images'] = array_values([...$kept, ...$this->storeUploadedImages($request)]);
+        $data['logo'] = $this->resolveLogo($request, $project);
 
         $project->update($data);
         $project->technologies()->sync($request->validated('technologies', []));
@@ -83,6 +85,10 @@ class ProjectController extends Controller
             $this->deleteStoredImage($image);
         }
 
+        if ($project->logo) {
+            $this->deleteStoredImage($project->logo);
+        }
+
         $project->delete();
 
         return to_route('admin.projects.index');
@@ -90,11 +96,40 @@ class ProjectController extends Controller
 
     private function prepareData(array $data): array
     {
-        unset($data['technologies'], $data['new_images'], $data['existing_images']);
+        unset($data['technologies'], $data['new_images'], $data['existing_images'], $data['logo'], $data['remove_logo']);
 
         $data['slug'] = Str::slug($data['slug'] ?: $data['title']);
 
         return $data;
+    }
+
+    /**
+     * Logo resultante: el recién subido (borrando el anterior), null si el
+     * admin lo quitó, o el que ya tenía si no lo tocó.
+     */
+    private function resolveLogo(Request $request, Project $project): ?string
+    {
+        $current = $project->logo;
+
+        if ($file = $request->file('logo')) {
+            $logo = $file->store('projects/logos', 'public');
+
+            if ($current) {
+                $this->deleteStoredImage($current);
+            }
+
+            return $logo;
+        }
+
+        if ($request->boolean('remove_logo')) {
+            if ($current) {
+                $this->deleteStoredImage($current);
+            }
+
+            return null;
+        }
+
+        return $current;
     }
 
     /**

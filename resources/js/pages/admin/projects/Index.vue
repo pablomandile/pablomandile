@@ -67,7 +67,15 @@ function destroy(project: Project): void {
 
                         <div class="space-y-3 p-4">
                             <div class="flex items-start justify-between gap-3">
-                                <p class="font-medium leading-tight">{{ project.title }}</p>
+                                <p class="flex items-center gap-2 font-medium leading-tight">
+                                    <img
+                                        v-if="project.logo_url"
+                                        :src="project.logo_url"
+                                        alt=""
+                                        class="h-7 w-7 shrink-0 rounded-md border border-border object-contain"
+                                    />
+                                    {{ project.title }}
+                                </p>
                                 <span class="shrink-0 text-xs text-muted-foreground">Orden {{ project.sort_order }}</span>
                             </div>
 
@@ -125,7 +133,17 @@ function destroy(project: Project): void {
                                         class="aspect-video w-24 rounded-md object-cover"
                                     />
                                 </td>
-                                <td class="p-3 font-medium">{{ project.title }}</td>
+                                <td class="p-3 font-medium">
+                                    <div class="flex items-center gap-2">
+                                        <img
+                                            v-if="project.logo_url"
+                                            :src="project.logo_url"
+                                            alt=""
+                                            class="h-7 w-7 shrink-0 rounded-md border border-border object-contain"
+                                        />
+                                        {{ project.title }}
+                                    </div>
+                                </td>
                                 <td class="max-w-48 p-3 text-muted-foreground">{{ technologyNames(project) }}</td>
                                 <td class="p-3">
                                     <span

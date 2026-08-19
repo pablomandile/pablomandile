@@ -46,6 +46,7 @@ class AdminProjectTest extends TestCase
                     UploadedFile::fake()->image('one.png', 800, 500),
                     UploadedFile::fake()->image('two.png', 800, 500),
                 ],
+                'logo' => UploadedFile::fake()->image('logo.png', 256, 256),
                 'is_featured' => '1',
                 'is_published' => '1',
                 'sort_order' => '5',
@@ -62,6 +63,106 @@ class AdminProjectTest extends TestCase
         $this->assertCount(2, $project->images);
         Storage::disk('public')->assertExists($project->images[0]);
         Storage::disk('public')->assertExists($project->images[1]);
+        $this->assertNotNull($project->logo);
+        Storage::disk('public')->assertExists($project->logo);
+    }
+
+    public function test_admin_can_replace_the_project_logo(): void
+    {
+        Storage::fake('public');
+
+        $oldLogo = UploadedFile::fake()->image('old-logo.png')->store('projects/logos', 'public');
+
+        $project = Project::create([
+            'title' => 'Con logo',
+            'slug' => 'con-logo',
+            'description' => ['es' => 'x', 'en' => 'x'],
+            'logo' => $oldLogo,
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->put("/admin/projects/{$project->id}", [
+                ...$this->baseUpdatePayload(),
+                'logo' => UploadedFile::fake()->image('new-logo.png', 256, 256),
+            ])
+            ->assertRedirect('/admin/projects');
+
+        $project->refresh();
+
+        $this->assertNotSame($oldLogo, $project->logo);
+        Storage::disk('public')->assertMissing($oldLogo);
+        Storage::disk('public')->assertExists($project->logo);
+    }
+
+    public function test_the_project_logo_survives_an_update_that_does_not_touch_it(): void
+    {
+        Storage::fake('public');
+
+        $logo = UploadedFile::fake()->image('logo.png')->store('projects/logos', 'public');
+
+        $project = Project::create([
+            'title' => 'Con logo',
+            'slug' => 'con-logo',
+            'description' => ['es' => 'x', 'en' => 'x'],
+            'logo' => $logo,
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->put("/admin/projects/{$project->id}", $this->baseUpdatePayload())
+            ->assertRedirect('/admin/projects');
+
+        $project->refresh();
+
+        $this->assertSame($logo, $project->logo);
+        Storage::disk('public')->assertExists($logo);
+    }
+
+    public function test_admin_can_remove_the_project_logo(): void
+    {
+        Storage::fake('public');
+
+        $logo = UploadedFile::fake()->image('logo.png')->store('projects/logos', 'public');
+
+        $project = Project::create([
+            'title' => 'Con logo',
+            'slug' => 'con-logo',
+            'description' => ['es' => 'x', 'en' => 'x'],
+            'logo' => $logo,
+        ]);
+
+        $this->actingAs(User::factory()->create())
+            ->put("/admin/projects/{$project->id}", [
+                ...$this->baseUpdatePayload(),
+                'remove_logo' => '1',
+            ])
+            ->assertRedirect('/admin/projects');
+
+        $project->refresh();
+
+        $this->assertNull($project->logo);
+        $this->assertNull($project->logo_url);
+        Storage::disk('public')->assertMissing($logo);
+    }
+
+    /**
+     * Campos mínimos que el formulario de edición siempre envía.
+     *
+     * @return array<string, mixed>
+     */
+    private function baseUpdatePayload(): array
+    {
+        return [
+            'title' => 'Con logo',
+            'slug' => 'con-logo',
+            'description' => ['es' => 'x', 'en' => 'x'],
+            'demo_url' => '',
+            'repo_url' => '',
+            'existing_images' => [],
+            'is_featured' => '0',
+            'is_published' => '1',
+            'sort_order' => '0',
+            'technologies' => [],
+        ];
     }
 
     public function test_admin_can_update_a_project_replacing_images(): void
@@ -144,12 +245,14 @@ class AdminProjectTest extends TestCase
         Storage::fake('public');
 
         $image = UploadedFile::fake()->image('gone.png')->store('projects', 'public');
+        $logo = UploadedFile::fake()->image('gone-logo.png')->store('projects/logos', 'public');
 
         $project = Project::create([
             'title' => 'Para borrar',
             'slug' => 'para-borrar',
             'description' => ['es' => 'x', 'en' => 'x'],
             'images' => [$image],
+            'logo' => $logo,
         ]);
 
         $this->actingAs(User::factory()->create())
@@ -158,5 +261,6 @@ class AdminProjectTest extends TestCase
 
         $this->assertDatabaseMissing('projects', ['id' => $project->id]);
         Storage::disk('public')->assertMissing($image);
+        Storage::disk('public')->assertMissing($logo);
     }
 }

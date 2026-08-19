@@ -75,10 +75,17 @@ const shownDescription = computed<string>(() =>
             </DialogContent>
         </Dialog>
 
-        <!-- Sin imágenes: inicial del título como placeholder. -->
+        <!-- Sin imágenes: el logo, o la inicial del título, como placeholder. -->
         <div v-else class="aspect-video overflow-hidden bg-night-soft">
             <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-violet-900/40 to-cyan-900/40">
-                <span class="gradient-text text-3xl font-bold">{{ project.title.charAt(0) }}</span>
+                <img
+                    v-if="project.logo_url"
+                    :src="project.logo_url"
+                    :alt="project.title"
+                    loading="lazy"
+                    class="max-h-[50%] max-w-[50%] object-contain"
+                />
+                <span v-else class="gradient-text text-3xl font-bold">{{ project.title.charAt(0) }}</span>
             </div>
         </div>
 
@@ -90,7 +97,17 @@ const shownDescription = computed<string>(() =>
         </span>
 
         <div class="flex flex-1 flex-col p-5">
-            <h3 class="text-lg font-semibold text-white">{{ project.title }}</h3>
+            <div class="flex items-center gap-3">
+                <!-- Logo que identifica al proyecto (si tiene uno cargado). -->
+                <img
+                    v-if="project.logo_url"
+                    :src="project.logo_url"
+                    :alt="project.title"
+                    loading="lazy"
+                    class="h-10 w-10 shrink-0 rounded-lg border border-white/10 bg-white/5 object-contain p-1"
+                />
+                <h3 class="text-lg font-semibold text-white">{{ project.title }}</h3>
+            </div>
 
             <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">
                 {{ shownDescription }}<template v-if="isLong">{{ expanded ? ' ' : '… ' }}<button

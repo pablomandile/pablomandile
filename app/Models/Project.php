@@ -16,12 +16,13 @@ class Project extends Model
         'demo_url',
         'repo_url',
         'images',
+        'logo',
         'is_featured',
         'is_published',
         'sort_order',
     ];
 
-    protected $appends = ['image_urls', 'cover_url'];
+    protected $appends = ['image_urls', 'cover_url', 'logo_url'];
 
     protected function casts(): array
     {
@@ -54,6 +55,16 @@ class Project extends Model
     protected function coverUrl(): Attribute
     {
         return Attribute::get(fn (): ?string => $this->image_urls[0] ?? null);
+    }
+
+    /**
+     * URL del logo que identifica al proyecto, o null si no tiene.
+     */
+    protected function logoUrl(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->logo
+            ? $this->resolveImageUrl($this->logo)
+            : null);
     }
 
     private function resolveImageUrl(string $image): string

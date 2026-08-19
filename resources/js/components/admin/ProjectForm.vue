@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Project, Technology } from '@/types/portfolio';
 import { Link, useForm } from '@inertiajs/vue3';
-import { Star, X } from 'lucide-vue-next';
-import { onBeforeUnmount, ref, watch } from 'vue';
+import { ImageOff, Star, X } from 'lucide-vue-next';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 const props = defineProps<{
     project?: Project | null;
@@ -26,6 +26,8 @@ const form = useForm({
     repo_url: props.project?.repo_url ?? '',
     existing_images: [...(props.project?.images ?? [])] as string[],
     new_images: [] as File[],
+    logo: null as File | null,
+    remove_logo: false,
     is_featured: props.project?.is_featured ?? false,
     is_published: props.project?.is_published ?? true,
     sort_order: props.project?.sort_order ?? 0,
@@ -37,6 +39,40 @@ const urlByPath: Record<string, string> = {};
 (props.project?.images ?? []).forEach((path, index) => {
     urlByPath[path] = props.project!.image_urls[index];
 });
+
+// Logo: el ya guardado se muestra hasta que se sube otro o se lo quita.
+const savedLogoUrl = props.project?.logo_url ?? null;
+const newLogo = ref<{ file: File; url: string } | null>(null);
+const logoPreview = computed<string | null>(() => newLogo.value?.url ?? (form.remove_logo ? null : savedLogoUrl));
+
+function discardNewLogo(): void {
+    if (newLogo.value) {
+        URL.revokeObjectURL(newLogo.value.url);
+        newLogo.value = null;
+    }
+}
+
+function onLogoChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+
+    discardNewLogo();
+    form.logo = file;
+
+    if (file) {
+        newLogo.value = { file, url: URL.createObjectURL(file) };
+        form.remove_logo = false;
+    }
+
+    input.value = ''; // permite volver a elegir el mismo archivo
+}
+
+function removeLogo(): void {
+    discardNewLogo();
+    form.logo = null;
+    // Sólo hay que avisarle al backend si había un logo guardado.
+    form.remove_logo = Boolean(savedLogoUrl);
+}
 
 // Imágenes nuevas seleccionadas (con preview local); se sincronizan a form.new_images.
 const newImages = ref<{ file: File; url: string }[]>([]);
@@ -72,6 +108,7 @@ function makeCoverExisting(index: number): void {
 
 onBeforeUnmount(() => {
     newImages.value.forEach((item) => URL.revokeObjectURL(item.url));
+    discardNewLogo();
 });
 
 const slugTouched = ref(isEdit);
@@ -144,6 +181,33 @@ const inputLikeClass =
                 <Input id="repo_url" v-model="form.repo_url" type="url" placeholder="https://github.com/…" />
                 <p v-if="form.errors.repo_url" class="text-sm text-destructive">{{ form.errors.repo_url }}</p>
             </div>
+        </div>
+
+        <div class="space-y-3">
+            <Label for="logo">Logo</Label>
+            <p class="text-xs text-muted-foreground">
+                El logo que identifica al proyecto: se muestra junto al título en la tarjeta.
+                PNG (mejor con fondo transparente), JPG o WebP · máx. 1 MB · ideal cuadrado, 256×256.
+            </p>
+
+            <div class="flex items-center gap-4">
+                <div
+                    class="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/40"
+                >
+                    <img v-if="logoPreview" :src="logoPreview" alt="" class="h-full w-full object-contain p-1.5" />
+                    <ImageOff v-else class="h-6 w-6 text-muted-foreground" />
+                </div>
+
+                <div class="min-w-0 flex-1 space-y-2">
+                    <Input id="logo" type="file" accept="image/png,image/jpeg,image/webp" @change="onLogoChange" />
+                    <Button v-if="logoPreview" type="button" variant="outline" size="sm" @click="removeLogo">
+                        <X class="h-4 w-4" />
+                        Quitar logo
+                    </Button>
+                </div>
+            </div>
+
+            <p v-if="form.errors.logo" class="text-sm text-destructive">{{ form.errors.logo }}</p>
         </div>
 
         <div class="space-y-3">
