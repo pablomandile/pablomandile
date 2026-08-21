@@ -14,18 +14,17 @@ export default {
             fontFamily: {
                 sans: ['Inter Variable', ...defaultTheme.fontFamily.sans],
             },
-            colors: {
-                night: {
-                    DEFAULT: '#0b1020',
-                    soft: '#111731',
-                },
-            },
             borderRadius: {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',
                 sm: 'calc(var(--radius) - 4px)',
             },
             colors: {
+                // Fondo del sitio público (la cara oscura del portfolio).
+                night: {
+                    DEFAULT: '#0b1020',
+                    soft: '#111731',
+                },
                 background: 'hsl(var(--background))',
                 foreground: 'hsl(var(--foreground))',
                 card: {
