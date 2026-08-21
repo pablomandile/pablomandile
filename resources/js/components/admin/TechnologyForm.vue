@@ -2,8 +2,10 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { availableTechIcons, techIconUrlBySlug } from '@/lib/techIcons';
 import type { Technology } from '@/types/portfolio';
 import { Link, useForm } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 interface CategoryOption {
     value: string;
@@ -23,6 +25,12 @@ const form = useForm({
     icon: props.technology?.icon ?? '',
     sort_order: props.technology?.sort_order ?? 0,
 });
+
+// Los logos disponibles son los SVG que están en el repo; el campo acepta
+// tanto el slug (`laravel-original`) como la clase de Devicon (`devicon-…`).
+const iconOptions = availableTechIcons.map((slug) => ({ slug, url: techIconUrlBySlug(slug)! }));
+const selectedIcon = computed(() => form.icon.trim().toLowerCase().replace(/^devicon-/, ''));
+const iconPreview = computed(() => techIconUrlBySlug(form.icon));
 
 function submit(): void {
     if (isEdit) {
@@ -54,9 +62,49 @@ function submit(): void {
         </div>
 
         <div class="space-y-2">
-            <Label for="icon">Ícono (opcional)</Label>
-            <Input id="icon" v-model="form.icon" placeholder="Ej. devicon-laravel-original" />
-            <p class="text-xs text-muted-foreground">Clase de <a href="https://devicon.dev" target="_blank" rel="noopener" class="underline">Devicon</a>, opcional.</p>
+            <Label for="icon">Logo (opcional)</Label>
+
+            <div class="flex items-center gap-3">
+                <!-- Chip oscuro: es el fondo que tienen los logos en el sitio. -->
+                <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-slate-900">
+                    <img v-if="iconPreview" :src="iconPreview" alt="" class="h-8 w-8 object-contain" />
+                    <span v-else class="text-xs text-slate-500">—</span>
+                </span>
+                <Input id="icon" v-model="form.icon" placeholder="Ej. laravel-original" />
+            </div>
+
+            <p class="text-xs text-muted-foreground">
+                Elegí uno de los logos disponibles. Si queda vacío, en el sitio se muestra la inicial del nombre.
+            </p>
+
+            <div class="flex flex-wrap gap-2 rounded-lg border border-border p-3">
+                <button
+                    type="button"
+                    class="flex h-[62px] w-16 flex-col items-center justify-center gap-1 rounded-lg border text-[10px] transition"
+                    :class="selectedIcon === '' ? 'border-violet-500 bg-violet-500/10' : 'border-border hover:border-violet-400'"
+                    title="Sin logo"
+                    @click="form.icon = ''"
+                >
+                    <span class="text-lg leading-none text-muted-foreground">—</span>
+                    <span class="text-muted-foreground">sin logo</span>
+                </button>
+
+                <button
+                    v-for="option in iconOptions"
+                    :key="option.slug"
+                    type="button"
+                    class="flex h-[62px] w-16 flex-col items-center justify-center gap-1 rounded-lg border transition"
+                    :class="selectedIcon === option.slug ? 'border-violet-500 bg-violet-500/10' : 'border-border hover:border-violet-400'"
+                    :title="option.slug"
+                    @click="form.icon = option.slug"
+                >
+                    <span class="flex h-8 w-8 items-center justify-center rounded-md bg-slate-900">
+                        <img :src="option.url" alt="" class="h-6 w-6 object-contain" />
+                    </span>
+                    <span class="w-full truncate px-1 text-center text-[10px] text-muted-foreground">{{ option.slug.split('-')[0] }}</span>
+                </button>
+            </div>
+
             <p v-if="form.errors.icon" class="text-sm text-destructive">{{ form.errors.icon }}</p>
         </div>
 

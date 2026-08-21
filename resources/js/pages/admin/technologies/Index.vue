@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { techIconUrl } from '@/lib/techIcons';
 import { type BreadcrumbItem } from '@/types';
 import type { Technology } from '@/types/portfolio';
 import { Head, Link, router } from '@inertiajs/vue3';
@@ -60,11 +61,22 @@ function destroy(technology: Technology): void {
                     <ul class="grid gap-3 md:hidden">
                         <li v-for="technology in items" :key="technology.id" class="space-y-3 rounded-xl border border-border p-4">
                             <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <p class="font-medium leading-tight">{{ technology.name }}</p>
-                                    <p v-if="technology.icon" class="mt-0.5 truncate text-xs text-muted-foreground">
-                                        {{ technology.icon }}
-                                    </p>
+                                <div class="flex min-w-0 items-center gap-3">
+                                    <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-slate-900">
+                                        <img
+                                            v-if="techIconUrl(technology)"
+                                            :src="techIconUrl(technology)!"
+                                            alt=""
+                                            class="h-6 w-6 object-contain"
+                                        />
+                                        <span v-else class="text-xs text-slate-500">—</span>
+                                    </span>
+                                    <div class="min-w-0">
+                                        <p class="font-medium leading-tight">{{ technology.name }}</p>
+                                        <p v-if="technology.icon" class="mt-0.5 truncate text-xs text-muted-foreground">
+                                            {{ technology.icon }}
+                                        </p>
+                                    </div>
                                 </div>
                                 <span class="shrink-0 text-xs text-muted-foreground">Orden {{ technology.sort_order }}</span>
                             </div>
@@ -90,6 +102,17 @@ function destroy(technology: Technology): void {
                             <tbody class="divide-y divide-border">
                                 <tr v-for="technology in items" :key="technology.id">
                                     <td class="w-16 p-3 text-muted-foreground">{{ technology.sort_order }}</td>
+                                    <td class="w-14 p-3">
+                                        <span class="flex h-9 w-9 items-center justify-center rounded-md bg-slate-900">
+                                            <img
+                                                v-if="techIconUrl(technology)"
+                                                :src="techIconUrl(technology)!"
+                                                alt=""
+                                                class="h-6 w-6 object-contain"
+                                            />
+                                            <span v-else class="text-xs text-slate-500">—</span>
+                                        </span>
+                                    </td>
                                     <td class="p-3 font-medium">{{ technology.name }}</td>
                                     <td class="p-3 text-muted-foreground">{{ technology.icon }}</td>
                                     <td class="p-3 text-right">
