@@ -17,11 +17,11 @@ const { target, revealed } = useRevealOnScroll(0.05);
             <SectionTitle :title="t('projects.title')" />
         </div>
 
-        <div class="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <div
                 v-for="(project, index) in projects"
                 :key="project.id"
-                class="reveal"
+                class="reveal h-full"
                 :class="{ 'reveal-visible': revealed }"
                 :style="{ transitionDelay: `${index * 90}ms` }"
             >

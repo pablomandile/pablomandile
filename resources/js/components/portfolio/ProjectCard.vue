@@ -109,7 +109,7 @@ const shownDescription = computed<string>(() =>
                 <h3 class="text-lg font-semibold text-white">{{ project.title }}</h3>
             </div>
 
-            <p class="mt-2 flex-1 text-sm leading-relaxed text-slate-400">
+            <p class="mt-2 min-h-[7lh] flex-1 text-sm leading-relaxed text-slate-400">
                 {{ shownDescription }}<template v-if="isLong">{{ expanded ? ' ' : '… ' }}<button
                         type="button"
                         class="cursor-pointer font-medium text-cyan-400 transition hover:text-cyan-300"
@@ -128,7 +128,9 @@ const shownDescription = computed<string>(() =>
                 </span>
             </div>
 
-            <div v-if="project.demo_url || project.repo_url" class="mt-5 flex gap-5 text-sm font-medium text-slate-300">
+            <!-- Se dibuja siempre, aunque el proyecto no tenga enlaces: así una
+                 ficha sin demo ni repo no queda más baja que las demás. -->
+            <div class="mt-5 flex min-h-5 gap-5 text-sm font-medium text-slate-300">
                 <a
                     v-if="project.demo_url"
                     :href="project.demo_url"
