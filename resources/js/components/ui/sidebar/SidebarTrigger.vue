@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '@/components/ui/button/Button.vue';
 import { cn } from '@/lib/utils';
-import { PanelLeft } from 'lucide-vue-next';
+import { Menu } from 'lucide-vue-next';
 import type { HTMLAttributes } from 'vue';
 import { useSidebar } from './utils';
 
@@ -14,7 +14,7 @@ const { toggleSidebar } = useSidebar();
 
 <template>
     <Button data-sidebar="trigger" variant="ghost" size="icon" :class="cn('h-7 w-7', props.class)" @click="toggleSidebar">
-        <PanelLeft />
-        <span class="sr-only">Toggle Sidebar</span>
+        <Menu />
+        <span class="sr-only">Abrir o cerrar el menú</span>
     </Button>
 </template>
