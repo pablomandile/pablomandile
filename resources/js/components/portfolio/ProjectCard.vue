@@ -10,6 +10,10 @@ import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{ project: Project }>();
 
+// La sección iguala el alto de todas las fichas, salvo mientras haya una
+// descripción desplegada; necesita saberlo.
+const emit = defineEmits<{ expandedChange: [expanded: boolean] }>();
+
 const { t } = useI18n();
 const { l } = useLocalized();
 
@@ -25,6 +29,11 @@ const isLong = computed<boolean>(() => fullDescription.value.length > DESCRIPTIO
 const shownDescription = computed<string>(() =>
     isLong.value && !expanded.value ? fullDescription.value.slice(0, DESCRIPTION_LIMIT).trimEnd() : fullDescription.value,
 );
+
+function toggleExpanded(): void {
+    expanded.value = !expanded.value;
+    emit('expandedChange', expanded.value);
+}
 </script>
 
 <template>
@@ -114,7 +123,7 @@ const shownDescription = computed<string>(() =>
                         type="button"
                         class="cursor-pointer font-medium text-cyan-400 transition hover:text-cyan-300"
                         :aria-expanded="expanded"
-                        @click="expanded = !expanded"
+                        @click="toggleExpanded()"
                     >{{ expanded ? t('projects.less') : t('projects.more') }}</button></template>
             </p>
 
