@@ -41,4 +41,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    // Token de la API con la que un agente (Claude Code) carga proyectos.
+    // Vacío = API apagada.
+    'portfolio_api' => [
+        'token' => env('PORTFOLIO_API_TOKEN'),
+    ],
+
 ];

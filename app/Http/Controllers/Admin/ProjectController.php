@@ -7,10 +7,9 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\Technology;
-use Illuminate\Http\Request;
+use App\Support\ProjectImages;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,7 +37,7 @@ class ProjectController extends Controller
     {
         $data = $this->prepareData($request->validated());
         $data['images'] = $this->storeUploadedImages($request);
-        $data['logo'] = $request->file('logo')?->store('projects/logos', 'public');
+        $data['logo'] = $request->hasFile('logo') ? ProjectImages::storeLogo($request->file('logo')) : null;
 
         $project = Project::create($data);
         $project->technologies()->sync($request->validated('technologies', []));
@@ -112,7 +111,7 @@ class ProjectController extends Controller
         $current = $project->logo;
 
         if ($file = $request->file('logo')) {
-            $logo = $file->store('projects/logos', 'public');
+            $logo = ProjectImages::storeLogo($file);
 
             if ($current) {
                 $this->deleteStoredImage($current);
@@ -139,9 +138,7 @@ class ProjectController extends Controller
      */
     private function storeUploadedImages(Request $request): array
     {
-        return collect($request->file('new_images', []))
-            ->map(fn (UploadedFile $file): string => $file->store('projects', 'public'))
-            ->all();
+        return ProjectImages::store($request->file('new_images', []));
     }
 
     private function technologyOptions()
@@ -153,8 +150,6 @@ class ProjectController extends Controller
 
     private function deleteStoredImage(string $image): void
     {
-        if ($image !== '' && ! str_starts_with($image, 'http')) {
-            Storage::disk('public')->delete($image);
-        }
+        ProjectImages::delete($image);
     }
 }
