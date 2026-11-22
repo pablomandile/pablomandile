@@ -48,7 +48,7 @@ class HomeTest extends TestCase
             );
     }
 
-    public function test_home_lists_projects_in_descending_alphabetical_order(): void
+    public function test_home_lists_projects_in_alphabetical_order(): void
     {
         foreach (['Bravo', 'Zulu', 'Alfa'] as $i => $title) {
             Project::create([
@@ -64,9 +64,9 @@ class HomeTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
-                ->where('projects.0.title', 'Zulu')
+                ->where('projects.0.title', 'Alfa')
                 ->where('projects.1.title', 'Bravo')
-                ->where('projects.2.title', 'Alfa')
+                ->where('projects.2.title', 'Zulu')
             );
     }
 }
