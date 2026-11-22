@@ -24,6 +24,8 @@ sobre el fondo del sitio la "W" violeta queda como un hueco oscuro.
 
 `grok.svg` viene de [Lobe Icons](https://lobehub.com/icons) (Simple Icons no lo tiene). `qwen.svg` y `gemini.svg` van en el color de la marca (`#615ced`, `#8e75b2`); `onedrive.svg`, `google-drive.svg`, `youtube.svg` y `cloudflare.svg` también, con `#0078d4`, `#4285f4`, `#ff0000` y `#f38020`.
 
+`alibaba.svg` también viene de Lobe Icons (`alibaba-color`), en el naranja de la marca (`#ff6003`). Lo usa z-image-turbo, que no tiene logo propio: es un modelo de Tongyi, el laboratorio de Alibaba.
+
 Para agregar una tecnología: bajá el SVG `original`, revisá que se lea sobre
 oscuro (si no, aclarale los fills como arriba), dejalo acá y elegí el logo desde
 el panel (Tecnologías → editar).
