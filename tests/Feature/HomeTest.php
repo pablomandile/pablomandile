@@ -47,4 +47,26 @@ class HomeTest extends TestCase
                 ->has('projects.0.technologies', 1)
             );
     }
+
+    public function test_home_lists_projects_in_descending_alphabetical_order(): void
+    {
+        foreach (['Bravo', 'Zulu', 'Alfa'] as $i => $title) {
+            Project::create([
+                'title' => $title,
+                'slug' => strtolower($title),
+                'description' => ['es' => $title, 'en' => $title],
+                'is_published' => true,
+                'is_featured' => $title === 'Alfa',
+                'sort_order' => $i,
+            ]);
+        }
+
+        $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('projects.0.title', 'Zulu')
+                ->where('projects.1.title', 'Bravo')
+                ->where('projects.2.title', 'Alfa')
+            );
+    }
 }

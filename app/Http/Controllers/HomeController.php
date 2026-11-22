@@ -40,8 +40,7 @@ class HomeController extends Controller
             'projects' => Project::query()
                 ->where('is_published', true)
                 ->with('technologies:id,name')
-                ->orderByDesc('is_featured')
-                ->orderBy('sort_order')
+                ->orderByDesc('title')
                 ->get(),
             'certificates' => Certificate::query()
                 ->where('is_published', true)
